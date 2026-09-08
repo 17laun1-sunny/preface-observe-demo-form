@@ -174,14 +174,19 @@
 
         async function apiGet(action, params = {}) {
             const query = new URLSearchParams({ action, ...params }).toString();
-            const res = await fetch(`${APPS_SCRIPT_URL}?${query}`);
+            // Added redirect: "follow" to bypass CORS
+            const res = await fetch(`${APPS_SCRIPT_URL}?${query}`, {
+                redirect: "follow" 
+            });
             return await res.json();
         }
 
         async function apiPost(data) {
+            // Added redirect: "follow" and kept text/plain to bypass CORS Preflight
             const res = await fetch(APPS_SCRIPT_URL, {
                 method: "POST",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
+                redirect: "follow",
                 body: JSON.stringify(data)
             });
             return await res.json();
