@@ -1,0 +1,467 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;Preface | Partner App&lt;/title&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>tailwind.config = {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>darkMode: 'class',</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>theme: { extend: { colors: { brandBase: '#F9F8F5', brandSurface: '#FFFFFF', brandPrimary: '#111827', brandSecondary: '#6B7280', brandSuccess: '#10B981', brandStudent: '#0284C7', brandBorder: '#E5E7EB' }, fontFamily: { sans: ['Inter', 'Helvetica Neue', 'Arial', 'sans-serif'] } } }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>html, body { max-width: 100vw; overflow-x: hidden; touch-action: pan-y; transition: background-color 0.3s ease, color 0.3s ease; scroll-behavior: smooth; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.btn-gradient { background: #111827; color: #FFFFFF; transition: all 0.2s ease; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.btn-gradient:hover { background: #1F2937; transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.dark .btn-gradient { background: #E5E7EB; color: #111827; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.dark .btn-gradient:hover { background: #FFFFFF; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.btn-disabled { background: #F3F4F6; color: #9CA3AF; cursor: not-allowed; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.dark .btn-disabled { background: #374151; color: #6B7280; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.input-ring:focus { outline: none; box-shadow: 0 0 0 2px #0284C7; border-color: #0284C7; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@keyframes swoopIn { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.animate-swoop { animation: swoopIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.hidden { display: none !important; }</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.pill-chk:checked + div { background-color: #0284C7; border-color: #0284C7; color: #FFFFFF; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.dark .pill-chk:checked + div { background-color: #0ea5e9; border-color: #0ea5e9; color: #FFFFFF; }</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.card-radio:checked + div { border-color: #0284C7; background-color: #f0f9ff; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.dark .card-radio:checked + div { border-color: #0ea5e9; background-color: rgba(14, 165, 233, 0.1); }</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.loader-spin { animation: spin 1s linear infinite; }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@keyframes spin { 100% { transform: rotate(360deg); } }</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body class="bg-brandBase dark:bg-gray-900 text-brandPrimary dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col items-center p-4 pt-8 sm:pt-12 transition-colors duration-300"&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="fixed bottom-6 left-6 sm:bottom-8 sm:left-8 z-40"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button onclick="toggleTheme()" aria-label="Toggle dark mode" class="p-3 rounded-full bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;svg id="themeIcon" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/svg&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- FULL SCREEN LOADING OVERLAY --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="submitOverlay" class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm animate-swoop"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;svg class="loader-spin w-12 h-12 text-brandStudent mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"&gt;&lt;/circle&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"&gt;&lt;/path&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/svg&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;h2 class="text-xl font-bold mb-1"&gt;Processing Booking...&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;p class="text-sm text-brandSecondary dark:text-gray-400 max-w-xs text-center"&gt;Securing your slots, generating calendar events, and sending emails. This usually takes about 5 to 15 seconds. Please do not refresh.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="w-full max-w-xl animate-swoop"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="text-center mb-6"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h1 class="text-2xl font-extrabold tracking-tight"&gt;Schedule Booking&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p class="text-brandSecondary dark:text-gray-400 text-sm mt-1 font-medium"&gt;Class Observations &amp; Demo&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="loader" class="text-center py-12"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="space-y-4 max-w-sm mx-auto animate-pulse"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="h-10 bg-gray-200 dark:bg-gray-700 rounded w-full"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="h-10 bg-gray-200 dark:bg-gray-700 rounded w-full"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="errorView" class="hidden bg-brandSurface dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 text-center"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p class="text-red-500 font-bold mb-2"&gt;Editing Locked&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p class="text-sm text-brandSecondary dark:text-gray-400"&gt;You cannot edit a booking within 24 hours of its start time. Please contact nomadmgt@preface.ai to make changes.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;form id="bookingForm" class="hidden" onsubmit="event.preventDefault();"&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="stepper" class="mb-4 text-center"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;p class="text-xs font-bold text-brandStudent tracking-wider uppercase" id="stepIndicator"&gt;Step 1 of 4: Profile&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="editBanner" class="hidden bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs font-bold px-4 py-3 rounded-xl mb-4 flex items-center justify-center"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"&gt;&lt;/path&gt;&lt;/svg&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>Editing existing booking</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="step1" class="bg-brandSurface dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 space-y-5 animate-swoop"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1.5"&gt;Full Name&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;input type="text" id="name" required class="w-full bg-brandBase dark:bg-gray-900 border border-brandBorder dark:border-gray-700 rounded-lg px-4 py-3 text-brandPrimary dark:text-white input-ring transition-colors"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1.5 flex justify-between"&gt;Email Address &lt;span id="emailCheck" class="hidden text-brandSuccess"&gt;✓ Valid&lt;/span&gt;&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;input type="email" id="email" onkeyup="validateEmail(this.value)" required class="w-full bg-brandBase dark:bg-gray-900 border border-brandBorder dark:border-gray-700 rounded-lg px-4 py-3 text-brandPrimary dark:text-white input-ring transition-colors"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1.5"&gt;Trained Platforms (Select 1 or 2)&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="grid grid-cols-2 gap-3 mt-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;label class="cursor-pointer block"&gt;&lt;input type="checkbox" value="Scratch" class="pill-chk hidden plat-chk"&gt;&lt;div class="text-center py-2.5 px-2 border border-brandBorder dark:border-gray-700 rounded-full text-sm font-medium text-brandSecondary dark:text-gray-400 transition-colors"&gt;Scratch&lt;/div&gt;&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;label class="cursor-pointer block"&gt;&lt;input type="checkbox" value="App Inventor" class="pill-chk hidden plat-chk"&gt;&lt;div class="text-center py-2.5 px-2 border border-brandBorder dark:border-gray-700 rounded-full text-sm font-medium text-brandSecondary dark:text-gray-400 transition-colors"&gt;App Inventor&lt;/div&gt;&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;label class="cursor-pointer block"&gt;&lt;input type="checkbox" value="Python" class="pill-chk hidden plat-chk"&gt;&lt;div class="text-center py-2.5 px-2 border border-brandBorder dark:border-gray-700 rounded-full text-sm font-medium text-brandSecondary dark:text-gray-400 transition-colors"&gt;Python&lt;/div&gt;&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;label class="cursor-pointer block"&gt;&lt;input type="checkbox" value="HTML/CSS/JS" class="pill-chk hidden plat-chk"&gt;&lt;div class="text-center py-2.5 px-2 border border-brandBorder dark:border-gray-700 rounded-full text-sm font-medium text-brandSecondary dark:text-gray-400 transition-colors"&gt;HTML/CSS/JS&lt;/div&gt;&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;button type="button" id="step1Btn" onclick="handleStep1Next()" class="w-full btn-gradient rounded-lg py-3 font-bold text-sm mt-4 shadow-sm"&gt;Next: Observations&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="step2" class="hidden bg-brandSurface dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 space-y-5 animate-swoop"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="mb-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase"&gt;All times in HKT (Hong Kong Time)&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p class="text-xs text-brandSecondary mt-1"&gt;Select one class per platform. Highly recommended.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div id="obsContainer" class="space-y-6"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span id="errStep2" class="hidden text-red-500 text-xs font-bold mt-2"&gt;Please select an option for all platforms.&lt;/span&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="flex space-x-3 pt-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button type="button" onclick="goToStep(1)" class="w-1/3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg py-3 font-bold text-sm transition hover:bg-gray-200 dark:hover:bg-gray-600"&gt;Back&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button type="button" onclick="handleStep2Next()" class="w-2/3 btn-gradient rounded-lg py-3 font-bold text-sm shadow-sm"&gt;Next: Demo&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="step3" class="hidden bg-brandSurface dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 space-y-5 animate-swoop"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2"&gt;All times in HKT&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div id="demoContainer" class="space-y-3"&gt;&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="border-t border-brandBorder dark:border-gray-700 pt-4 mt-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;label class="block cursor-pointer"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;input type="radio" name="demoSlot" value="skip" onchange="toggleAvail()" class="card-radio hidden"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="flex items-center space-x-3 p-4 border border-brandBorder dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 transition-colors"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="text-sm font-bold text-brandSecondary dark:text-gray-400"&gt;Skip / Provide General Availability&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div id="availBox" class="hidden overflow-hidden transition-all duration-300 max-h-0 opacity-0 mt-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;textarea id="demoAvailability" rows="3" class="w-full bg-brandBase dark:bg-gray-900 border border-brandBorder dark:border-gray-700 rounded-lg p-4 text-brandPrimary dark:text-white input-ring text-sm resize-none" placeholder="If you can't make it to any of the times above, please let us know when you are generally free next week..."&gt;&lt;/textarea&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span id="errStep3" class="hidden text-red-500 text-xs font-bold mt-2"&gt;Please select a demo slot or choose skip.&lt;/span&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="flex space-x-3 pt-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button type="button" onclick="goToStep(2)" class="w-1/3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg py-3 font-bold text-sm transition hover:bg-gray-200 dark:hover:bg-gray-600"&gt;Back&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button type="button" onclick="handleStep3Next()" class="w-2/3 btn-gradient rounded-lg py-3 font-bold text-sm shadow-sm"&gt;Review Summary&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="step4" class="hidden bg-brandSurface dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 space-y-5 animate-swoop"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;h2 class="font-bold text-lg border-b border-brandBorder dark:border-gray-700 pb-3"&gt;Review &amp; Submit&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div id="summaryBox" class="text-sm space-y-4 text-brandSecondary dark:text-gray-300"&gt;&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="flex space-x-3 pt-4"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button type="button" onclick="goToStep(3)" class="w-1/3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg py-3 font-bold text-sm transition hover:bg-gray-200 dark:hover:bg-gray-600"&gt;Edit&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button type="button" id="submitBtn" onclick="submitData()" class="w-2/3 btn-gradient rounded-lg py-3 font-bold text-sm shadow-sm"&gt;Confirm Booking&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/form&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="successView" class="hidden bg-brandSurface dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 text-center animate-swoop"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="w-16 h-16 mx-auto bg-green-100 text-brandSuccess rounded-full flex items-center justify-center mb-4 shadow-sm"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"&gt;&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"&gt;&lt;/path&gt;&lt;/svg&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-xl font-bold text-brandPrimary dark:text-white mb-2"&gt;Booking Successful&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p class="text-sm text-brandSecondary dark:text-gray-400"&gt;Your calendar events have been created. Please check your email for the preparation materials.&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- JAVASCRIPT LOGIC INCLUDING VERCEL API FETCH --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-Ts3XOkdUwSF27d8bx-5RI9iQ_B55wKnQhZA8fcVt1ezJhd_RvqqE8S6oV7v3o8XHow/exec";</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let sysData = null;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let selectedUuid = null;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let userDataObj = null;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>async function apiGet(action, params = {}) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const query = new URLSearchParams({ action, ...params }).toString();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const res = await fetch(`${APPS_SCRIPT_URL}?${query}`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>return await res.json();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>async function apiPost(data) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const res = await fetch(APPS_SCRIPT_URL, {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>method: "POST",</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>headers: { "Content-Type": "text/plain;charset=utf-8" },</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>body: JSON.stringify(data)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>return await res.json();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>window.onload = () =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (localStorage.getItem('partner_theme') === 'dark') toggleTheme();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>apiGet("getSystemData").then(data =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>sysData = data;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('loader').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('bookingForm').classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}).catch(err =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('loader').innerHTML = `&lt;p class="text-red-500 font-bold"&gt;Error connecting to database.&lt;/p&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>};</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function validateEmail(email) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (re.test(String(email).toLowerCase())) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('emailCheck').classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('emailCheck').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function handleStep1Next() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const emailInput = document.getElementById('email');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>emailInput.value = emailInput.value.trim().toLowerCase();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const email = emailInput.value;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const name = document.getElementById('name').value.trim();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let checkedPlats = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c =&gt; c.value);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (!email || !name || checkedPlats.length === 0 || checkedPlats.length &gt; 2) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>alert("Please fill your name, valid email, and select 1 or 2 platforms.");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const btn = document.getElementById('step1Btn');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>btn.innerText = "Checking Records..."; btn.disabled = true;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>apiGet("getUserBooking", { email: email }).then(userData =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>btn.innerText = "Next: Observations"; btn.disabled = false;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (userData &amp;&amp; userData.uuid) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>if (userData.isLocked) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>document.getElementById('step1').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>document.getElementById('errorView').classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>if (confirm("We found an existing booking under this email. Load and update your previous booking?")) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>selectedUuid = userData.uuid;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>userDataObj = userData;<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>document.getElementById('demoAvailability').value = userData.demoAvailability || "";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>document.getElementById('editBanner').classList.remove('hidden');</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                        </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>document.querySelectorAll('.plat-chk').forEach(c =&gt; c.checked = false);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>userData.platforms.forEach(p =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>let chk = document.querySelector(`.plat-chk[value="${p}"]`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>if(chk) chk.checked = true;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>checkedPlats = userData.platforms;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>document.getElementById('submitBtn').innerText = "Update Booking";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>selectedUuid = null; userDataObj = null;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>document.getElementById('editBanner').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>document.getElementById('submitBtn').innerText = "Confirm Booking";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>selectedUuid = null; userDataObj = null;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>document.getElementById('editBanner').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>document.getElementById('submitBtn').innerText = "Confirm Booking";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>renderObservations(checkedPlats);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>goToStep(2);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function handleStep2Next() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c =&gt; c.value);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let valid = true;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>platforms.forEach(p =&gt; { if(!document.querySelector(`input[name="obs_${p}"]:checked`)) valid = false; });</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if(!valid) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('errStep2').classList.remove('hidden'); return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('errStep2').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>goToStep(3);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function handleStep3Next() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let demoSel = document.querySelector('input[name="demoSlot"]:checked');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if(!demoSel) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('errStep3').classList.remove('hidden'); return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('errStep3').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>buildSummary();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>goToStep(4);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function goToStep(step) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>[1,2,3,4].forEach(s =&gt; document.getElementById('step'+s).classList.add('hidden'));</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('step'+step).classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>window.scrollTo({ top: 0, behavior: 'smooth' });</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let title = step===1?"Profile":step===2?"Observations":step===3?"Teaching Demo":"Review";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('stepIndicator').innerText = `Step ${step} of 4: ${title}`;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (step === 3) renderDemos();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function renderObservations(platforms) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const container = document.getElementById('obsContainer');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>container.innerHTML = '';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>platforms.forEach(p =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let html = `&lt;div&gt;&lt;h3 class="text-sm font-bold text-brandPrimary dark:text-white mb-3"&gt;${p}&lt;/h3&gt;&lt;div class="space-y-2"&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let options = sysData.observations.filter(o =&gt; o.platform === p);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (options.length === 0) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>html += `&lt;div class="p-4 border border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-400 text-xs text-center"&gt;No upcoming classes available for ${p}.&lt;/div&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>options.forEach(o =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>let isChecked = userDataObj &amp;&amp; (userDataObj.obs1 == o.id || userDataObj.obs2 == o.id) ? "checked" : "";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>html += `</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;label class="block cursor-pointer"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;input type="radio" name="obs_${p}" value="${o.id}" ${isChecked} class="card-radio hidden"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;div class="flex items-center p-3 border border-brandBorder dark:border-gray-700 rounded-xl bg-brandSurface dark:bg-gray-900 transition-colors"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 text-center mr-4 w-14 flex-shrink-0"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;span class="block text-[10px] font-bold text-gray-500 uppercase"&gt;${o.monthDay.split(' ')[0]}&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;span class="block text-lg font-black text-brandPrimary dark:text-white leading-none"&gt;${o.monthDay.split(' ')[1]}&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;span class="block text-sm font-bold text-brandPrimary dark:text-white"&gt;${o.dayOfWeek} ${o.timeRange}&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                    </span>&lt;span class="block text-xs font-medium text-brandSecondary mt-0.5"&gt;${o.course} (S${o.session}) w/ ${o.teacher}&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/label&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let skipCheck = userDataObj &amp;&amp; !userDataObj.obs1 &amp;&amp; !userDataObj.obs2 &amp;&amp; options.length &gt; 0 ? "checked" : "";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>html += `</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;label class="block cursor-pointer mt-2"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;input type="radio" name="obs_${p}" value="skip" ${skipCheck} class="card-radio hidden"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="flex items-center p-3 border border-brandBorder dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 transition-colors"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span class="text-xs font-bold text-brandSecondary dark:text-gray-400 pl-2"&gt;Skip / Not Available&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/label&gt;&lt;/div&gt;&lt;/div&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>container.insertAdjacentHTML('beforeend', html);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function renderDemos() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const container = document.getElementById('demoContainer');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>container.innerHTML = '';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>sysData.demos.forEach(d =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let isChecked = userDataObj &amp;&amp; userDataObj.demo === d.id ? "checked" : "";</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>container.insertAdjacentHTML('beforeend', `</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;label class="block cursor-pointer"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;input type="radio" name="demoSlot" value="${d.id}" ${isChecked} class="card-radio hidden"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="flex items-center p-3 border border-brandBorder dark:border-gray-700 rounded-xl bg-brandSurface dark:bg-gray-900 transition-colors"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 text-center mr-4 w-14 flex-shrink-0"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="block text-[10px] font-bold text-gray-500 uppercase"&gt;${d.monthDay.split(' ')[0]}&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="block text-lg font-black text-brandPrimary dark:text-white leading-none"&gt;${d.monthDay.split(' ')[1]}&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="block text-sm font-bold text-brandPrimary dark:text-white"&gt;${d.dayOfWeek} ${d.timeRange}&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;span class="block text-xs font-medium text-brandSecondary mt-0.5"&gt;Teaching Demo&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/label&gt;`);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (userDataObj &amp;&amp; userDataObj.demo === "") {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.querySelector('input[name="demoSlot"][value="skip"]').checked = true;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>toggleAvail(true);<span class="Apple-converted-space"> </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function toggleAvail(forceOpen = false) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const box = document.getElementById('availBox');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (forceOpen || document.querySelector('input[name="demoSlot"][value="skip"]').checked) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>box.classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>setTimeout(()=&gt; { box.style.maxHeight = '150px'; box.style.opacity = '1'; }, 10);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>box.style.maxHeight = '0'; box.style.opacity = '0';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>setTimeout(()=&gt; { box.classList.add('hidden'); }, 300);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function buildSummary() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const box = document.getElementById('summaryBox');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c =&gt; c.value);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let html = `&lt;p class="mb-1"&gt;&lt;strong class="text-brandPrimary dark:text-white"&gt;Name:&lt;/strong&gt; ${document.getElementById('name').value}&lt;/p&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>html += `&lt;p class="mb-4"&gt;&lt;strong class="text-brandPrimary dark:text-white"&gt;Email:&lt;/strong&gt; ${document.getElementById('email').value}&lt;/p&gt;`;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>platforms.forEach(p =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let sel = document.querySelector(`input[name="obs_${p}"]:checked`).value;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if(sel === "skip") {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>html += `&lt;p class="mb-2"&gt;&lt;strong class="text-brandPrimary dark:text-white"&gt;${p} Obs:&lt;/strong&gt; &lt;span class="text-gray-400 italic"&gt;Skipped&lt;/span&gt;&lt;/p&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>let oSlot = sysData.observations.find(o =&gt; o.id == sel);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>html += `&lt;p class="mb-2"&gt;&lt;strong class="text-brandPrimary dark:text-white"&gt;${p} Obs:&lt;/strong&gt; ${oSlot.display} w/ ${oSlot.teacher}&lt;/p&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let demoSel = document.querySelector('input[name="demoSlot"]:checked').value;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if(demoSel === "skip") {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>html += `&lt;p class="mt-4"&gt;&lt;strong class="text-brandPrimary dark:text-white"&gt;Teaching Demo:&lt;/strong&gt; &lt;span class="text-gray-400 italic"&gt;Skipped (Availability provided)&lt;/span&gt;&lt;/p&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let dSlot = sysData.demos.find(d =&gt; d.id === demoSel);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>html += `&lt;p class="mt-4"&gt;&lt;strong class="text-brandPrimary dark:text-white"&gt;Teaching Demo:&lt;/strong&gt; ${dSlot.display}&lt;/p&gt;`;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box.innerHTML = html;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function submitData() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('submitOverlay').classList.remove('hidden');</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c =&gt; c.value);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let obs = [];</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>platforms.forEach(p =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let sel = document.querySelector(`input[name="obs_${p}"]:checked`).value;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (sel !== "skip") obs.push(sel);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let demoSel = document.querySelector('input[name="demoSlot"]:checked').value;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const payload = {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>uuid: selectedUuid,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>name: document.getElementById('name').value,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>email: document.getElementById('email').value,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>platforms: platforms,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>observations: obs,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>demo: demoSel,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>demoAvailability: document.getElementById('demoAvailability').value</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>};</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>apiPost(payload).then(res =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('submitOverlay').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (res.success) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>document.getElementById('bookingForm').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>document.getElementById('successView').classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>window.scrollTo({ top: 0, behavior: 'smooth' });</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>alert(res.message);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}).catch(err =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('submitOverlay').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>alert("An error occurred during submission. Please check your connection and try again.");</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function toggleTheme() {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const html = document.documentElement;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const icon = document.getElementById('themeIcon');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (html.classList.contains('dark')) {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>html.classList.remove('dark'); localStorage.setItem('partner_theme', 'light');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>icon.innerHTML = '&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /&gt;';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>html.classList.add('dark'); localStorage.setItem('partner_theme', 'dark');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>icon.innerHTML = '&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /&gt;';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+</body>
+</html>
