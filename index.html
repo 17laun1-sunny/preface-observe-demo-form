@@ -255,10 +255,13 @@
         }
 
         function paintObservations() {
-            const step2 = document.getElementById('step2');
-            if (!pendingPlatforms || step2.classList.contains('hidden')) return;
-            if (slotsState === "ready" && sysData) renderObservations(pendingPlatforms);
-            else showObsPlaceholder(slotsState === "error" ? "error" : "loading");
+            if (!pendingPlatforms) return;
+            const step2Hidden = document.getElementById('step2').classList.contains('hidden');
+            if (slotsState === "ready" && sysData) {
+                renderObservations(pendingPlatforms);
+                return;
+            }
+            if (!step2Hidden) showObsPlaceholder(slotsState === "error" ? "error" : "loading");
         }
 
         function loadSystemData(opts) {
@@ -286,8 +289,12 @@
                 sysData = data;
                 slotsState = "ready";
                 showSlotsStatus("ready");
-                paintObservations();
-                if (!document.getElementById('step3').classList.contains('hidden')) renderDemos();
+                try {
+                    paintObservations();
+                    if (!document.getElementById('step3').classList.contains('hidden')) renderDemos();
+                } catch (err) {
+                    // Keep the loaded schedule. A render miss should not flip the form into the error state.
+                }
             }).catch(() => {
                 if (id !== slotsReq) return;
                 sysData = null;
@@ -408,12 +415,26 @@
         }
 
         function handleStep3Next() {
+            const err = document.getElementById('errStep3');
+            if (slotsState !== "ready" || !sysData) {
+                err.textContent = slotsState === "error"
+                    ? "Class times failed to load. Tap Retry, then choose a demo."
+                    : "Class times are still loading. Please wait a moment.";
+                err.classList.remove('hidden');
+                return;
+            }
             let demoSel = document.querySelector('input[name="demoSlot"]:checked');
             if(!demoSel) {
-                document.getElementById('errStep3').classList.remove('hidden'); return;
+                err.textContent = "Please select a demo slot or choose skip.";
+                err.classList.remove('hidden');
+                return;
             }
-            document.getElementById('errStep3').classList.add('hidden');
-            buildSummary();
+            if (!buildSummary()) {
+                err.textContent = "Choose an observation option for each platform, then pick a demo.";
+                err.classList.remove('hidden');
+                return;
+            }
+            err.classList.add('hidden');
             goToStep(4);
         }
 
@@ -425,7 +446,16 @@
             let title = step===1?"Profile":step===2?"Observations":step===3?"Teaching Demo":"Review";
             document.getElementById('stepIndicator').innerText = `Step ${step} of 4: ${title}`;
             
-            if (step === 3 && sysData) renderDemos();
+            if (step === 2 && !document.querySelector("#obsContainer input[type='radio']")) paintObservations();
+            if (step === 3) {
+                if (sysData) renderDemos();
+                else {
+                    const waiting = slotsState === "error"
+                        ? "Class times are not available yet. Use Retry above."
+                        : "Loading class times…";
+                    document.getElementById('demoContainer').innerHTML = `<p class="text-sm text-center ${slotsState === "error" ? "text-red-500 font-bold" : "text-brandSecondary dark:text-gray-400"}">${waiting}</p>`;
+                }
+            }
         }
 
         function renderObservations(platforms) {
@@ -440,13 +470,15 @@
                 } else {
                     options.forEach(o => {
                         let isChecked = userDataObj && (userDataObj.obs1 == o.id || userDataObj.obs2 == o.id) ? "checked" : "";
+                        const monthDay = String(o.monthDay || "");
+                        const monthParts = monthDay.split(" ");
                         html += `
                         <label class="block cursor-pointer">
                             <input type="radio" name="obs_${p}" value="${o.id}" ${isChecked} class="card-radio hidden">
                             <div class="flex items-center p-3 border border-brandBorder dark:border-gray-700 rounded-xl bg-brandSurface dark:bg-gray-900 transition-colors">
                                 <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 text-center mr-4 w-14 flex-shrink-0">
-                                    <span class="block text-[10px] font-bold text-gray-500 uppercase">${o.monthDay.split(' ')[0]}</span>
-                                    <span class="block text-lg font-black text-brandPrimary dark:text-white leading-none">${o.monthDay.split(' ')[1]}</span>
+                                    <span class="block text-[10px] font-bold text-gray-500 uppercase">${monthParts[0] || ""}</span>
+                                    <span class="block text-lg font-black text-brandPrimary dark:text-white leading-none">${monthParts[1] || ""}</span>
                                 </div>
                                 <div>
                                     <span class="block text-sm font-bold text-brandPrimary dark:text-white">${o.dayOfWeek} ${o.timeRange}</span>
@@ -469,20 +501,23 @@
         }
 
         function renderDemos() {
+            if (!sysData || !Array.isArray(sysData.demos)) return;
             const container = document.getElementById('demoContainer');
             container.innerHTML = '';
             sysData.demos.forEach(d => {
                 let isChecked = userDataObj && userDataObj.demo === d.id ? "checked" : "";
+                const monthDay = String(d.monthDay || "");
+                const monthParts = monthDay.split(" ");
                 container.insertAdjacentHTML('beforeend', `
                 <label class="block cursor-pointer">
                     <input type="radio" name="demoSlot" value="${d.id}" ${isChecked} class="card-radio hidden">
                     <div class="flex items-center p-3 border border-brandBorder dark:border-gray-700 rounded-xl bg-brandSurface dark:bg-gray-900 transition-colors">
                         <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 text-center mr-4 w-14 flex-shrink-0">
-                            <span class="block text-[10px] font-bold text-gray-500 uppercase">${d.monthDay.split(' ')[0]}</span>
-                            <span class="block text-lg font-black text-brandPrimary dark:text-white leading-none">${d.monthDay.split(' ')[1]}</span>
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">${monthParts[0] || ""}</span>
+                            <span class="block text-lg font-black text-brandPrimary dark:text-white leading-none">${monthParts[1] || ""}</span>
                         </div>
                         <div>
-                            <span class="block text-sm font-bold text-brandPrimary dark:text-white">${d.dayOfWeek} ${d.timeRange}</span>
+                            <span class="block text-sm font-bold text-brandPrimary dark:text-white">${d.dayOfWeek || ""} ${d.timeRange || ""}</span>
                             <span class="block text-xs font-medium text-brandSecondary mt-0.5">Teaching Demo</span>
                         </div>
                     </div>
@@ -506,44 +541,65 @@
         }
 
         function buildSummary() {
+            if (!sysData) return false;
             const box = document.getElementById('summaryBox');
             let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c => c.value);
             let html = `<p class="mb-1"><strong class="text-brandPrimary dark:text-white">Name:</strong> ${document.getElementById('name').value}</p>`;
             html += `<p class="mb-4"><strong class="text-brandPrimary dark:text-white">Email:</strong> ${document.getElementById('email').value}</p>`;
             
-            platforms.forEach(p => {
-                let sel = document.querySelector(`input[name="obs_${p}"]:checked`).value;
-                if(sel === "skip") {
+            for (const p of platforms) {
+                const selected = document.querySelector(`input[name="obs_${p}"]:checked`);
+                if (!selected) return false;
+                if (selected.value === "skip") {
                     html += `<p class="mb-2"><strong class="text-brandPrimary dark:text-white">${p} Obs:</strong> <span class="text-gray-400 italic">Skipped</span></p>`;
                 } else {
-                    let oSlot = sysData.observations.find(o => o.id == sel);
+                    const oSlot = sysData.observations.find(o => o.id == selected.value);
+                    if (!oSlot) return false;
                     html += `<p class="mb-2"><strong class="text-brandPrimary dark:text-white">${p} Obs:</strong> ${oSlot.display} w/ ${oSlot.teacher}</p>`;
                 }
-            });
+            }
 
-            let demoSel = document.querySelector('input[name="demoSlot"]:checked').value;
-            if(demoSel === "skip") {
+            const demoSelected = document.querySelector('input[name="demoSlot"]:checked');
+            if (!demoSelected) return false;
+            if (demoSelected.value === "skip") {
                 html += `<p class="mt-4"><strong class="text-brandPrimary dark:text-white">Teaching Demo:</strong> <span class="text-gray-400 italic">Skipped (Availability provided)</span></p>`;
             } else {
-                let dSlot = sysData.demos.find(d => d.id === demoSel);
+                const dSlot = sysData.demos.find(d => d.id === demoSelected.value);
+                if (!dSlot) return false;
                 html += `<p class="mt-4"><strong class="text-brandPrimary dark:text-white">Teaching Demo:</strong> ${dSlot.display}</p>`;
             }
             box.innerHTML = html;
+            return true;
         }
 
         function submitData() {
+            if (slotsState !== "ready" || !sysData) {
+                alert(slotsState === "error"
+                    ? "Class times failed to load. Tap Retry, then submit again."
+                    : "Class times are still loading. Please wait a moment.");
+                return;
+            }
+            let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c => c.value);
+            let obs = [];
+            for (const p of platforms) {
+                const selected = document.querySelector(`input[name="obs_${p}"]:checked`);
+                if (!selected) {
+                    alert("Please choose an observation option for each platform.");
+                    return;
+                }
+                if (selected.value !== "skip") obs.push(selected.value);
+            }
+            const demoSelected = document.querySelector('input[name="demoSlot"]:checked');
+            if (!demoSelected) {
+                alert("Please select a demo slot or choose skip.");
+                return;
+            }
+            let demoSel = demoSelected.value;
+
             const slowNote = document.getElementById('submitSlowNote');
             slowNote.classList.add('hidden');
             document.getElementById('submitOverlay').classList.remove('hidden');
             const slowTimer = setTimeout(() => slowNote.classList.remove('hidden'), 8000);
-
-            let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c => c.value);
-            let obs = [];
-            platforms.forEach(p => {
-                let sel = document.querySelector(`input[name="obs_${p}"]:checked`).value;
-                if (sel !== "skip") obs.push(sel);
-            });
-            let demoSel = document.querySelector('input[name="demoSlot"]:checked').value;
 
             const payload = {
                 uuid: selectedUuid,
