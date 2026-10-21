@@ -247,9 +247,12 @@
 
         function showObsPlaceholder(mode) {
             const container = document.getElementById('obsContainer');
+            const hint = document.getElementById('obsHint');
             if (mode === "error") {
+                if (hint) hint.textContent = "Class times are not available yet. Use Retry above.";
                 container.innerHTML = '<p class="text-sm text-center text-red-500 font-bold">Class times are not available yet. Use Retry above.</p>';
             } else {
+                if (hint) hint.textContent = "Loading available class times…";
                 container.innerHTML = '<p class="text-sm text-center text-brandSecondary dark:text-gray-400">Loading class times… this usually takes a few seconds.</p>';
             }
         }
@@ -309,9 +312,12 @@
         } catch (err) { /* private mode can block storage; the form still loads */ }
         loadSystemData();
 
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").toLowerCase());
+        }
+
         function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (re.test(String(email).toLowerCase())) {
+            if (isValidEmail(email)) {
                 document.getElementById('emailCheck').classList.remove('hidden');
             } else {
                 document.getElementById('emailCheck').classList.add('hidden');
@@ -325,7 +331,7 @@
             const name = document.getElementById('name').value.trim();
             let checkedPlats = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c => c.value);
             
-            if (!email || !name || checkedPlats.length === 0 || checkedPlats.length > 2) {
+            if (!name || !isValidEmail(email) || checkedPlats.length === 0 || checkedPlats.length > 2) {
                 alert("Please fill your name, valid email, and select 1 or 2 platforms.");
                 return;
             }
@@ -517,15 +523,18 @@
 
         function renderDemos() {
             if (!sysData || !Array.isArray(sysData.demos)) return;
+            const current = document.querySelector('input[name="demoSlot"]:checked');
+            let selectedId = current ? current.value : "";
+            if (!selectedId && userDataObj) selectedId = userDataObj.demo ? userDataObj.demo : "skip";
             const container = document.getElementById('demoContainer');
             container.innerHTML = '';
             sysData.demos.forEach(d => {
-                let isChecked = userDataObj && userDataObj.demo === d.id ? "checked" : "";
+                const isChecked = selectedId === String(d.id) ? "checked" : "";
                 const monthDay = String(d.monthDay || "");
                 const monthParts = monthDay.split(" ");
                 container.insertAdjacentHTML('beforeend', `
                 <label class="block cursor-pointer">
-                    <input type="radio" name="demoSlot" value="${d.id}" ${isChecked} class="card-radio hidden">
+                    <input type="radio" name="demoSlot" value="${d.id}" ${isChecked} onchange="toggleAvail()" class="card-radio hidden">
                     <div class="flex items-center p-3 border border-brandBorder dark:border-gray-700 rounded-xl bg-brandSurface dark:bg-gray-900 transition-colors">
                         <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 text-center mr-4 w-14 flex-shrink-0">
                             <span class="block text-[10px] font-bold text-gray-500 uppercase">${monthParts[0] || ""}</span>
@@ -538,10 +547,10 @@
                     </div>
                 </label>`);
             });
-            if (userDataObj && userDataObj.demo === "") {
-                document.querySelector('input[name="demoSlot"][value="skip"]').checked = true;
-                toggleAvail(true); 
-            }
+            const skip = document.querySelector('input[name="demoSlot"][value="skip"]');
+            if (skip) skip.checked = selectedId === "skip";
+            if (selectedId === "skip") toggleAvail(true);
+            else toggleAvail(false);
         }
 
         function toggleAvail(forceOpen = false) {
