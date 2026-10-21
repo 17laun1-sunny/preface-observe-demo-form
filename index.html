@@ -106,7 +106,7 @@
             <div id="step2" class="hidden bg-brandSurface dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 space-y-5 animate-swoop">
                 <div class="mb-4">
                     <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">All times in HKT (Hong Kong Time)</p>
-                    <p class="text-xs text-brandSecondary mt-1">Select one class per platform. Highly recommended.</p>
+                    <p id="obsHint" class="text-xs text-brandSecondary mt-1">Select one class per platform. Highly recommended.</p>
                 </div>
                 
                 <div id="obsContainer" class="space-y-6"></div>
@@ -392,6 +392,17 @@
             }
         }
 
+        function observationChoice(platform) {
+            const selected = document.querySelector(`input[name="obs_${platform}"]:checked`);
+            if (selected) return selected.value;
+            if (!sysData || !Array.isArray(sysData.observations)) return null;
+            const options = sysData.observations.filter(o => o.platform === platform);
+            if (options.length > 0) return null;
+            const skip = document.querySelector(`input[name="obs_${platform}"][value="skip"]`);
+            if (skip) skip.checked = true;
+            return "skip";
+        }
+
         function handleStep2Next() {
             const err = document.getElementById('errStep2');
             if (slotsState !== "ready" || !sysData) {
@@ -402,8 +413,7 @@
                 return;
             }
             let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c => c.value);
-            let valid = true;
-            platforms.forEach(p => { if(!document.querySelector(`input[name="obs_${p}"]:checked`)) valid = false; });
+            let valid = platforms.every(p => observationChoice(p));
             
             if(!valid) {
                 err.textContent = "Please select an option for all platforms.";
@@ -466,7 +476,7 @@
                 let options = sysData.observations.filter(o => o.platform === p);
                 
                 if (options.length === 0) {
-                    html += `<div class="p-4 border border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-400 text-xs text-center">No upcoming classes available for ${p}.</div>`;
+                    html += `<div class="p-4 border border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-400 text-xs text-center">No upcoming classes for ${p}. This observation will be skipped.</div>`;
                 } else {
                     options.forEach(o => {
                         let isChecked = userDataObj && (userDataObj.obs1 == o.id || userDataObj.obs2 == o.id) ? "checked" : "";
@@ -488,7 +498,7 @@
                         </label>`;
                     });
                 }
-                let skipCheck = userDataObj && !userDataObj.obs1 && !userDataObj.obs2 && options.length > 0 ? "checked" : "";
+                let skipCheck = options.length === 0 || (userDataObj && !userDataObj.obs1 && !userDataObj.obs2 && options.length > 0) ? "checked" : "";
                 html += `
                 <label class="block cursor-pointer mt-2">
                     <input type="radio" name="obs_${p}" value="skip" ${skipCheck} class="card-radio hidden">
@@ -498,6 +508,11 @@
                 </label></div></div>`;
                 container.insertAdjacentHTML('beforeend', html);
             });
+            const hint = document.getElementById('obsHint');
+            const anyOpen = platforms.some(p => sysData.observations.some(o => o.platform === p));
+            hint.textContent = anyOpen
+                ? "Select one class per platform. Highly recommended."
+                : "No classes are open for your platforms, so those observations are skipped. Continue when you are ready.";
         }
 
         function renderDemos() {
@@ -548,12 +563,12 @@
             html += `<p class="mb-4"><strong class="text-brandPrimary dark:text-white">Email:</strong> ${document.getElementById('email').value}</p>`;
             
             for (const p of platforms) {
-                const selected = document.querySelector(`input[name="obs_${p}"]:checked`);
-                if (!selected) return false;
-                if (selected.value === "skip") {
+                const choice = observationChoice(p);
+                if (!choice) return false;
+                if (choice === "skip") {
                     html += `<p class="mb-2"><strong class="text-brandPrimary dark:text-white">${p} Obs:</strong> <span class="text-gray-400 italic">Skipped</span></p>`;
                 } else {
-                    const oSlot = sysData.observations.find(o => o.id == selected.value);
+                    const oSlot = sysData.observations.find(o => o.id == choice);
                     if (!oSlot) return false;
                     html += `<p class="mb-2"><strong class="text-brandPrimary dark:text-white">${p} Obs:</strong> ${oSlot.display} w/ ${oSlot.teacher}</p>`;
                 }
@@ -582,12 +597,12 @@
             let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c => c.value);
             let obs = [];
             for (const p of platforms) {
-                const selected = document.querySelector(`input[name="obs_${p}"]:checked`);
-                if (!selected) {
+                const choice = observationChoice(p);
+                if (!choice) {
                     alert("Please choose an observation option for each platform.");
                     return;
                 }
-                if (selected.value !== "skip") obs.push(selected.value);
+                if (choice !== "skip") obs.push(choice);
             }
             const demoSelected = document.querySelector('input[name="demoSlot"]:checked');
             if (!demoSelected) {
