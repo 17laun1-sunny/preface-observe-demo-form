@@ -143,7 +143,3 @@ async function handler(req, res) {
 
 handler.config = { maxDuration: 60 };
 module.exports = handler;
-module.exports._resetCacheForTests = function resetCacheForTests() {
-  memoryCache = null;
-  inflightSystemData = null;
-};

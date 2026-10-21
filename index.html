@@ -270,8 +270,11 @@
                 } catch (err) {
                     lastError = err;
                     const aborted = err && (err.name === "AbortError" || err.name === "TimeoutError");
-                    const canFallback = !attempt.direct && !aborted && (err instanceof TypeError || err.status === 404);
-                    if (canFallback) continue;
+                    const proxyMissing = err instanceof TypeError || (err && err.status === 404);
+                    // A GET that dies inside the proxy can still succeed against Apps Script.
+                    // Do not replay POST: the first attempt may already have created the booking.
+                    const upstreamGetFailed = method === "GET" && err && (err.status === 502 || err.status === 504);
+                    if (!attempt.direct && !aborted && (proxyMissing || upstreamGetFailed)) continue;
                     throw err;
                 }
             }
