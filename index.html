@@ -52,6 +52,7 @@
         </svg>
         <h2 class="text-xl font-bold mb-1">Processing Booking...</h2>
         <p class="text-sm text-brandSecondary dark:text-gray-400 max-w-xs text-center">Securing your slots, generating calendar events, and sending emails. This usually takes about 5 to 15 seconds. Please do not refresh.</p>
+        <p id="submitSlowNote" class="hidden text-xs text-brandSecondary dark:text-gray-400 max-w-xs text-center mt-3">Still working. Booking can take a bit longer when the calendar is busy.</p>
     </div>
 
     <div class="w-full max-w-xl animate-swoop">
@@ -60,23 +61,20 @@
             <p class="text-brandSecondary dark:text-gray-400 text-sm mt-1 font-medium">Class Observations & Demo</p>
         </div>
 
-        <div id="loader" class="text-center py-12">
-            <div class="space-y-4 max-w-sm mx-auto animate-pulse">
-                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto"></div>
-                <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-                <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-            </div>
-        </div>
-
         <div id="errorView" class="hidden bg-brandSurface dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 text-center">
             <p class="text-red-500 font-bold mb-2">Editing Locked</p>
             <p class="text-sm text-brandSecondary dark:text-gray-400">You cannot edit a booking within 24 hours of its start time. Please contact nomadmgt@preface.ai to make changes.</p>
         </div>
 
-        <form id="bookingForm" class="hidden" onsubmit="event.preventDefault();">
+        <form id="bookingForm" onsubmit="event.preventDefault();">
             
             <div id="stepper" class="mb-4 text-center">
                 <p class="text-xs font-bold text-brandStudent tracking-wider uppercase" id="stepIndicator">Step 1 of 4: Profile</p>
+            </div>
+
+            <div id="slotsStatus" role="status" aria-live="polite" class="mb-4 rounded-xl border border-brandBorder dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 text-center text-sm text-brandSecondary dark:text-gray-300">
+                <p id="slotsStatusText">Loading available class times…</p>
+                <button type="button" id="slotsRetryBtn" onclick="loadSystemData({ fresh: true })" class="hidden mt-3 px-4 py-2 rounded-lg text-sm font-bold btn-gradient">Retry</button>
             </div>
             
             <div id="editBanner" class="hidden bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs font-bold px-4 py-3 rounded-xl mb-4 flex items-center justify-center">
@@ -108,7 +106,7 @@
             <div id="step2" class="hidden bg-brandSurface dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 space-y-5 animate-swoop">
                 <div class="mb-4">
                     <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">All times in HKT (Hong Kong Time)</p>
-                    <p class="text-xs text-brandSecondary mt-1">Select one class per platform. Highly recommended.</p>
+                    <p id="obsHint" class="text-xs text-brandSecondary mt-1">Select one class per platform. Highly recommended.</p>
                 </div>
                 
                 <div id="obsContainer" class="space-y-6"></div>
@@ -166,70 +164,202 @@
     </div>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-Ts3XOkdUwSF27d8bx-5RI9iQ_B55wKnQhZA8fcVt1ezJhd_RvqqE8S6oV7v3o8XHow/exec";
+        const API_URL = "/api/gas";
+        const GET_TIMEOUT_MS = 35000;
+        const POST_TIMEOUT_MS = 58000;
 
         let sysData = null;
+        let slotsState = "loading";
+        let slotsReq = 0;
+        let pendingPlatforms = null;
         let selectedUuid = null;
         let userDataObj = null;
 
-        async function apiGet(action, params = {}) {
-            const query = new URLSearchParams({ action, ...params }).toString();
-            // Added redirect: "follow" to bypass CORS
-            const res = await fetch(`${APPS_SCRIPT_URL}?${query}`, {
-                redirect: "follow" 
-            });
-            return await res.json();
+        function fetchWithTimeout(url, options, timeoutMs) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            return fetch(url, Object.assign({}, options, { signal: controller.signal }))
+                .finally(() => clearTimeout(timer));
+        }
+
+        async function apiGet(action, params, opts) {
+            const options = opts || {};
+            const timeoutMs = options.timeoutMs || GET_TIMEOUT_MS;
+            const attempts = options.retries == null ? 1 : options.retries;
+            let lastError;
+            for (let attempt = 0; attempt <= attempts; attempt++) {
+                const bypassCache = !!options.fresh || attempt > 0;
+                try {
+                    const query = new URLSearchParams(Object.assign({ action: action }, params || {}));
+                    const res = await fetchWithTimeout(API_URL + "?" + query.toString(), {
+                        cache: bypassCache ? "no-store" : "default"
+                    }, timeoutMs);
+                    const data = await res.json().catch(() => undefined);
+                    if (!res.ok || data === undefined) {
+                        throw new Error((data && data.error) || "Request failed");
+                    }
+                    return data;
+                } catch (err) {
+                    lastError = err;
+                    if (attempt < attempts && typeof options.onRetry === "function") options.onRetry();
+                }
+            }
+            throw lastError;
         }
 
         async function apiPost(data) {
-            // Added redirect: "follow" and kept text/plain to bypass CORS Preflight
-            const res = await fetch(APPS_SCRIPT_URL, {
+            const res = await fetchWithTimeout(API_URL, {
                 method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                redirect: "follow",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
-            });
-            return await res.json();
+            }, POST_TIMEOUT_MS);
+            const body = await res.json().catch(() => null);
+            if (!res.ok || !body) {
+                throw new Error((body && body.error) || "Request failed");
+            }
+            return body;
         }
 
-        window.onload = () => {
-            if (localStorage.getItem('partner_theme') === 'dark') toggleTheme();
-            apiGet("getSystemData").then(data => {
+        function showSlotsStatus(mode) {
+            const box = document.getElementById('slotsStatus');
+            const text = document.getElementById('slotsStatusText');
+            const retry = document.getElementById('slotsRetryBtn');
+            box.classList.remove('hidden');
+            retry.classList.add('hidden');
+            text.classList.remove('text-red-500', 'font-bold');
+            if (mode === "loading") {
+                text.textContent = "Loading available class times…";
+            } else if (mode === "slow") {
+                const onProfile = !document.getElementById('step1').classList.contains('hidden');
+                text.textContent = onProfile
+                    ? "Still loading the schedule. You can fill in your name and email while this finishes."
+                    : "Still loading the schedule. Class times will show here in a few seconds.";
+            } else if (mode === "retry") {
+                text.textContent = "The schedule service was slow. Trying once more…";
+            } else if (mode === "error") {
+                text.textContent = "Couldn't load class times. Check your connection and try again.";
+                text.classList.add('text-red-500', 'font-bold');
+                retry.classList.remove('hidden');
+            } else {
+                box.classList.add('hidden');
+            }
+        }
+
+        function showObsPlaceholder(mode) {
+            const container = document.getElementById('obsContainer');
+            const hint = document.getElementById('obsHint');
+            if (mode === "error") {
+                if (hint) hint.textContent = "Class times are not available yet. Use Retry above.";
+                container.innerHTML = '<p class="text-sm text-center text-red-500 font-bold">Class times are not available yet. Use Retry above.</p>';
+            } else {
+                if (hint) hint.textContent = "Loading available class times…";
+                container.innerHTML = '<p class="text-sm text-center text-brandSecondary dark:text-gray-400">Loading class times… this usually takes a few seconds.</p>';
+            }
+        }
+
+        function paintObservations() {
+            if (!pendingPlatforms) return;
+            const step2Hidden = document.getElementById('step2').classList.contains('hidden');
+            if (slotsState === "ready" && sysData) {
+                renderObservations(pendingPlatforms);
+                return;
+            }
+            if (!step2Hidden) showObsPlaceholder(slotsState === "error" ? "error" : "loading");
+        }
+
+        function loadSystemData(opts) {
+            const fresh = !!(opts && opts.fresh);
+            const id = ++slotsReq;
+            slotsState = "loading";
+            sysData = null;
+            showSlotsStatus("loading");
+            paintObservations();
+            const slowTimer = setTimeout(() => {
+                if (id === slotsReq && slotsState === "loading") showSlotsStatus("slow");
+            }, 6000);
+            apiGet("getSystemData", {}, {
+                timeoutMs: GET_TIMEOUT_MS,
+                retries: 1,
+                fresh: fresh,
+                onRetry: () => {
+                    if (id === slotsReq) showSlotsStatus("retry");
+                }
+            }).then(data => {
+                if (id !== slotsReq) return;
+                if (!data || !Array.isArray(data.observations) || !Array.isArray(data.demos)) {
+                    throw new Error("Unexpected schedule data");
+                }
                 sysData = data;
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('bookingForm').classList.remove('hidden');
-            }).catch(err => {
-                document.getElementById('loader').innerHTML = `<p class="text-red-500 font-bold">Error connecting to database.</p>`;
-            });
-        };
+                slotsState = "ready";
+                showSlotsStatus("ready");
+                try {
+                    paintObservations();
+                    if (!document.getElementById('step3').classList.contains('hidden')) renderDemos();
+                } catch (err) {
+                    // Keep the loaded schedule. A render miss should not flip the form into the error state.
+                }
+            }).catch(() => {
+                if (id !== slotsReq) return;
+                sysData = null;
+                slotsState = "error";
+                showSlotsStatus("error");
+                paintObservations();
+            }).finally(() => clearTimeout(slowTimer));
+        }
+
+        try {
+            if (localStorage.getItem('partner_theme') === 'dark') toggleTheme();
+        } catch (err) { /* private mode can block storage; the form still loads */ }
+        loadSystemData();
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").toLowerCase());
+        }
 
         function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (re.test(String(email).toLowerCase())) {
+            if (isValidEmail(email)) {
                 document.getElementById('emailCheck').classList.remove('hidden');
             } else {
                 document.getElementById('emailCheck').classList.add('hidden');
             }
         }
 
-        function handleStep1Next() {
+        async function handleStep1Next() {
             const emailInput = document.getElementById('email');
             emailInput.value = emailInput.value.trim().toLowerCase();
             const email = emailInput.value;
             const name = document.getElementById('name').value.trim();
             let checkedPlats = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c => c.value);
             
-            if (!email || !name || checkedPlats.length === 0 || checkedPlats.length > 2) {
+            if (!name || !isValidEmail(email) || checkedPlats.length === 0 || checkedPlats.length > 2) {
                 alert("Please fill your name, valid email, and select 1 or 2 platforms.");
                 return;
             }
             
             const btn = document.getElementById('step1Btn');
             btn.innerText = "Checking Records..."; btn.disabled = true;
-            
-            apiGet("getUserBooking", { email: email }).then(userData => {
-                btn.innerText = "Next: Observations"; btn.disabled = false;
-                
+
+            let userData;
+            let lookupFailed = false;
+            try {
+                userData = await apiGet("getUserBooking", { email: email }, {
+                    timeoutMs: 25000,
+                    retries: 1,
+                    fresh: true,
+                    onRetry: () => { btn.innerText = "Still checking..."; }
+                });
+            } catch (err) {
+                lookupFailed = true;
+            } finally {
+                btn.innerText = "Next: Observations";
+                btn.disabled = false;
+            }
+            if (lookupFailed) {
+                alert("Couldn't check for an existing booking. Please try again.");
+                return;
+            }
+
+            try {
                 if (userData && userData.uuid) {
                     if (userData.isLocked) {
                         document.getElementById('step1').classList.add('hidden');
@@ -260,30 +390,67 @@
                     document.getElementById('submitBtn').innerText = "Confirm Booking";
                 }
                 
-                renderObservations(checkedPlats);
+                pendingPlatforms = checkedPlats;
                 goToStep(2);
-            });
+                paintObservations();
+            } catch (err) {
+                alert("Something went wrong opening the next step. Please try again.");
+            }
+        }
+
+        function observationChoice(platform) {
+            const selected = document.querySelector(`input[name="obs_${platform}"]:checked`);
+            if (selected) return selected.value;
+            if (!sysData || !Array.isArray(sysData.observations)) return null;
+            const options = sysData.observations.filter(o => o.platform === platform);
+            if (options.length > 0) return null;
+            const skip = document.querySelector(`input[name="obs_${platform}"][value="skip"]`);
+            if (skip) skip.checked = true;
+            return "skip";
         }
 
         function handleStep2Next() {
+            const err = document.getElementById('errStep2');
+            if (slotsState !== "ready" || !sysData) {
+                err.textContent = slotsState === "error"
+                    ? "Class times failed to load. Tap Retry, then choose a time."
+                    : "Class times are still loading. Please wait a moment.";
+                err.classList.remove('hidden');
+                return;
+            }
             let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c => c.value);
-            let valid = true;
-            platforms.forEach(p => { if(!document.querySelector(`input[name="obs_${p}"]:checked`)) valid = false; });
+            let valid = platforms.every(p => observationChoice(p));
             
             if(!valid) {
-                document.getElementById('errStep2').classList.remove('hidden'); return;
+                err.textContent = "Please select an option for all platforms.";
+                err.classList.remove('hidden');
+                return;
             }
-            document.getElementById('errStep2').classList.add('hidden');
+            err.classList.add('hidden');
             goToStep(3);
         }
 
         function handleStep3Next() {
+            const err = document.getElementById('errStep3');
+            if (slotsState !== "ready" || !sysData) {
+                err.textContent = slotsState === "error"
+                    ? "Class times failed to load. Tap Retry, then choose a demo."
+                    : "Class times are still loading. Please wait a moment.";
+                err.classList.remove('hidden');
+                return;
+            }
             let demoSel = document.querySelector('input[name="demoSlot"]:checked');
             if(!demoSel) {
-                document.getElementById('errStep3').classList.remove('hidden'); return;
+                err.textContent = "Please select a demo slot or choose skip.";
+                err.classList.remove('hidden');
+                return;
             }
-            document.getElementById('errStep3').classList.add('hidden');
-            buildSummary();
+            if (!buildSummary()) {
+                err.textContent = "Choose an observation option for each platform, then pick a demo.";
+                err.classList.remove('hidden');
+                return;
+            }
+            err.classList.add('hidden');
             goToStep(4);
         }
 
@@ -295,7 +462,16 @@
             let title = step===1?"Profile":step===2?"Observations":step===3?"Teaching Demo":"Review";
             document.getElementById('stepIndicator').innerText = `Step ${step} of 4: ${title}`;
             
-            if (step === 3) renderDemos();
+            if (step === 2 && !document.querySelector("#obsContainer input[type='radio']")) paintObservations();
+            if (step === 3) {
+                if (sysData) renderDemos();
+                else {
+                    const waiting = slotsState === "error"
+                        ? "Class times are not available yet. Use Retry above."
+                        : "Loading class times…";
+                    document.getElementById('demoContainer').innerHTML = `<p class="text-sm text-center ${slotsState === "error" ? "text-red-500 font-bold" : "text-brandSecondary dark:text-gray-400"}">${waiting}</p>`;
+                }
+            }
         }
 
         function renderObservations(platforms) {
@@ -306,17 +482,19 @@
                 let options = sysData.observations.filter(o => o.platform === p);
                 
                 if (options.length === 0) {
-                    html += `<div class="p-4 border border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-400 text-xs text-center">No upcoming classes available for ${p}.</div>`;
+                    html += `<div class="p-4 border border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-400 text-xs text-center">No upcoming classes for ${p}. This observation will be skipped.</div>`;
                 } else {
                     options.forEach(o => {
                         let isChecked = userDataObj && (userDataObj.obs1 == o.id || userDataObj.obs2 == o.id) ? "checked" : "";
+                        const monthDay = String(o.monthDay || "");
+                        const monthParts = monthDay.split(" ");
                         html += `
                         <label class="block cursor-pointer">
                             <input type="radio" name="obs_${p}" value="${o.id}" ${isChecked} class="card-radio hidden">
                             <div class="flex items-center p-3 border border-brandBorder dark:border-gray-700 rounded-xl bg-brandSurface dark:bg-gray-900 transition-colors">
                                 <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 text-center mr-4 w-14 flex-shrink-0">
-                                    <span class="block text-[10px] font-bold text-gray-500 uppercase">${o.monthDay.split(' ')[0]}</span>
-                                    <span class="block text-lg font-black text-brandPrimary dark:text-white leading-none">${o.monthDay.split(' ')[1]}</span>
+                                    <span class="block text-[10px] font-bold text-gray-500 uppercase">${monthParts[0] || ""}</span>
+                                    <span class="block text-lg font-black text-brandPrimary dark:text-white leading-none">${monthParts[1] || ""}</span>
                                 </div>
                                 <div>
                                     <span class="block text-sm font-bold text-brandPrimary dark:text-white">${o.dayOfWeek} ${o.timeRange}</span>
@@ -326,7 +504,7 @@
                         </label>`;
                     });
                 }
-                let skipCheck = userDataObj && !userDataObj.obs1 && !userDataObj.obs2 && options.length > 0 ? "checked" : "";
+                let skipCheck = options.length === 0 || (userDataObj && !userDataObj.obs1 && !userDataObj.obs2 && options.length > 0) ? "checked" : "";
                 html += `
                 <label class="block cursor-pointer mt-2">
                     <input type="radio" name="obs_${p}" value="skip" ${skipCheck} class="card-radio hidden">
@@ -336,32 +514,43 @@
                 </label></div></div>`;
                 container.insertAdjacentHTML('beforeend', html);
             });
+            const hint = document.getElementById('obsHint');
+            const anyOpen = platforms.some(p => sysData.observations.some(o => o.platform === p));
+            hint.textContent = anyOpen
+                ? "Select one class per platform. Highly recommended."
+                : "No classes are open for your platforms, so those observations are skipped. Continue when you are ready.";
         }
 
         function renderDemos() {
+            if (!sysData || !Array.isArray(sysData.demos)) return;
+            const current = document.querySelector('input[name="demoSlot"]:checked');
+            let selectedId = current ? current.value : "";
+            if (!selectedId && userDataObj) selectedId = userDataObj.demo ? userDataObj.demo : "skip";
             const container = document.getElementById('demoContainer');
             container.innerHTML = '';
             sysData.demos.forEach(d => {
-                let isChecked = userDataObj && userDataObj.demo === d.id ? "checked" : "";
+                const isChecked = selectedId === String(d.id) ? "checked" : "";
+                const monthDay = String(d.monthDay || "");
+                const monthParts = monthDay.split(" ");
                 container.insertAdjacentHTML('beforeend', `
                 <label class="block cursor-pointer">
-                    <input type="radio" name="demoSlot" value="${d.id}" ${isChecked} class="card-radio hidden">
+                    <input type="radio" name="demoSlot" value="${d.id}" ${isChecked} onchange="toggleAvail()" class="card-radio hidden">
                     <div class="flex items-center p-3 border border-brandBorder dark:border-gray-700 rounded-xl bg-brandSurface dark:bg-gray-900 transition-colors">
                         <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 text-center mr-4 w-14 flex-shrink-0">
-                            <span class="block text-[10px] font-bold text-gray-500 uppercase">${d.monthDay.split(' ')[0]}</span>
-                            <span class="block text-lg font-black text-brandPrimary dark:text-white leading-none">${d.monthDay.split(' ')[1]}</span>
+                            <span class="block text-[10px] font-bold text-gray-500 uppercase">${monthParts[0] || ""}</span>
+                            <span class="block text-lg font-black text-brandPrimary dark:text-white leading-none">${monthParts[1] || ""}</span>
                         </div>
                         <div>
-                            <span class="block text-sm font-bold text-brandPrimary dark:text-white">${d.dayOfWeek} ${d.timeRange}</span>
+                            <span class="block text-sm font-bold text-brandPrimary dark:text-white">${d.dayOfWeek || ""} ${d.timeRange || ""}</span>
                             <span class="block text-xs font-medium text-brandSecondary mt-0.5">Teaching Demo</span>
                         </div>
                     </div>
                 </label>`);
             });
-            if (userDataObj && userDataObj.demo === "") {
-                document.querySelector('input[name="demoSlot"][value="skip"]').checked = true;
-                toggleAvail(true); 
-            }
+            const skip = document.querySelector('input[name="demoSlot"][value="skip"]');
+            if (skip) skip.checked = selectedId === "skip";
+            if (selectedId === "skip") toggleAvail(true);
+            else toggleAvail(false);
         }
 
         function toggleAvail(forceOpen = false) {
@@ -376,41 +565,65 @@
         }
 
         function buildSummary() {
+            if (!sysData) return false;
             const box = document.getElementById('summaryBox');
             let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c => c.value);
             let html = `<p class="mb-1"><strong class="text-brandPrimary dark:text-white">Name:</strong> ${document.getElementById('name').value}</p>`;
             html += `<p class="mb-4"><strong class="text-brandPrimary dark:text-white">Email:</strong> ${document.getElementById('email').value}</p>`;
             
-            platforms.forEach(p => {
-                let sel = document.querySelector(`input[name="obs_${p}"]:checked`).value;
-                if(sel === "skip") {
+            for (const p of platforms) {
+                const choice = observationChoice(p);
+                if (!choice) return false;
+                if (choice === "skip") {
                     html += `<p class="mb-2"><strong class="text-brandPrimary dark:text-white">${p} Obs:</strong> <span class="text-gray-400 italic">Skipped</span></p>`;
                 } else {
-                    let oSlot = sysData.observations.find(o => o.id == sel);
+                    const oSlot = sysData.observations.find(o => o.id == choice);
+                    if (!oSlot) return false;
                     html += `<p class="mb-2"><strong class="text-brandPrimary dark:text-white">${p} Obs:</strong> ${oSlot.display} w/ ${oSlot.teacher}</p>`;
                 }
-            });
+            }
 
-            let demoSel = document.querySelector('input[name="demoSlot"]:checked').value;
-            if(demoSel === "skip") {
+            const demoSelected = document.querySelector('input[name="demoSlot"]:checked');
+            if (!demoSelected) return false;
+            if (demoSelected.value === "skip") {
                 html += `<p class="mt-4"><strong class="text-brandPrimary dark:text-white">Teaching Demo:</strong> <span class="text-gray-400 italic">Skipped (Availability provided)</span></p>`;
             } else {
-                let dSlot = sysData.demos.find(d => d.id === demoSel);
+                const dSlot = sysData.demos.find(d => d.id === demoSelected.value);
+                if (!dSlot) return false;
                 html += `<p class="mt-4"><strong class="text-brandPrimary dark:text-white">Teaching Demo:</strong> ${dSlot.display}</p>`;
             }
             box.innerHTML = html;
+            return true;
         }
 
         function submitData() {
-            document.getElementById('submitOverlay').classList.remove('hidden');
-
+            if (slotsState !== "ready" || !sysData) {
+                alert(slotsState === "error"
+                    ? "Class times failed to load. Tap Retry, then submit again."
+                    : "Class times are still loading. Please wait a moment.");
+                return;
+            }
             let platforms = Array.from(document.querySelectorAll('.plat-chk:checked')).map(c => c.value);
             let obs = [];
-            platforms.forEach(p => {
-                let sel = document.querySelector(`input[name="obs_${p}"]:checked`).value;
-                if (sel !== "skip") obs.push(sel);
-            });
-            let demoSel = document.querySelector('input[name="demoSlot"]:checked').value;
+            for (const p of platforms) {
+                const choice = observationChoice(p);
+                if (!choice) {
+                    alert("Please choose an observation option for each platform.");
+                    return;
+                }
+                if (choice !== "skip") obs.push(choice);
+            }
+            const demoSelected = document.querySelector('input[name="demoSlot"]:checked');
+            if (!demoSelected) {
+                alert("Please select a demo slot or choose skip.");
+                return;
+            }
+            let demoSel = demoSelected.value;
+
+            const slowNote = document.getElementById('submitSlowNote');
+            slowNote.classList.add('hidden');
+            document.getElementById('submitOverlay').classList.remove('hidden');
+            const slowTimer = setTimeout(() => slowNote.classList.remove('hidden'), 8000);
 
             const payload = {
                 uuid: selectedUuid,
@@ -423,17 +636,21 @@
             };
 
             apiPost(payload).then(res => {
+                clearTimeout(slowTimer);
+                slowNote.classList.add('hidden');
                 document.getElementById('submitOverlay').classList.add('hidden');
                 if (res.success) {
                     document.getElementById('bookingForm').classList.add('hidden');
                     document.getElementById('successView').classList.remove('hidden');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    alert(res.message);
+                    alert(res.message || "The booking could not be saved.");
                 }
             }).catch(err => {
+                clearTimeout(slowTimer);
+                slowNote.classList.add('hidden');
                 document.getElementById('submitOverlay').classList.add('hidden');
-                alert("An error occurred during submission. Please check your connection and try again.");
+                alert("We didn't get a confirmation. Check your email before trying again so you don't book twice.");
             });
         }
 
