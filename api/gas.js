@@ -58,6 +58,8 @@ async function handler(req, res) {
   const incoming = requestParams(req);
   const action = incoming.get("action") || "";
   const upstream = new URL(APPS_SCRIPT_URL);
+  // Non-empty only for a scoped schedule reload. The memory cache stays the public list.
+  let excludeUuid = "";
 
   if (method === "GET") {
     if (!GET_ACTIONS.has(action)) {
@@ -71,8 +73,16 @@ async function handler(req, res) {
       }
       upstream.searchParams.set("email", email);
     }
+    if (action === "getSystemData") {
+      excludeUuid = (incoming.get("excludeUuid") || "").trim();
+      if (excludeUuid.length > 200) {
+        return sendJson(res, 400, { error: "Invalid booking reference." }, "no-store");
+      }
+      if (excludeUuid) upstream.searchParams.set("excludeUuid", excludeUuid);
+    }
     if (
       action === "getSystemData" &&
+      !excludeUuid &&
       memoryCache.body &&
       Date.now() - memoryCache.at < MEMORY_TTL_MS
     ) {
@@ -128,6 +138,8 @@ async function handler(req, res) {
       if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.observations) || !Array.isArray(parsed.demos)) {
         return sendJson(res, 502, { error: "The schedule service returned an unexpected response." }, "no-store");
       }
+      // Held-slot reloads are per booking. Do not serve or store them as the public list.
+      if (excludeUuid) return sendJson(res, 200, text, "no-store");
       memoryCache = { at: Date.now(), body: text };
       return sendJson(res, 200, text, SYSTEM_CACHE_CONTROL);
     }

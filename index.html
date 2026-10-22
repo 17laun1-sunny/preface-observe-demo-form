@@ -61,11 +61,6 @@
             <p class="text-brandSecondary dark:text-gray-400 text-sm mt-1 font-medium">Class Observations & Demo</p>
         </div>
 
-        <div id="errorView" class="hidden bg-brandSurface dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 text-center">
-            <p class="text-red-500 font-bold mb-2">Editing Locked</p>
-            <p class="text-sm text-brandSecondary dark:text-gray-400">You cannot edit a booking within 24 hours of its start time. Please contact nomadmgt@preface.ai to make changes.</p>
-        </div>
-
         <form id="bookingForm" onsubmit="event.preventDefault();">
             
             <div id="stepper" class="mb-4 text-center">
@@ -74,12 +69,12 @@
 
             <div id="slotsStatus" role="status" aria-live="polite" class="mb-4 rounded-xl border border-brandBorder dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 text-center text-sm text-brandSecondary dark:text-gray-300">
                 <p id="slotsStatusText">Loading available class times…</p>
-                <button type="button" id="slotsRetryBtn" onclick="loadSystemData({ fresh: true })" class="hidden mt-3 px-4 py-2 rounded-lg text-sm font-bold btn-gradient">Retry</button>
+                <button type="button" id="slotsRetryBtn" onclick="retrySystemData()" class="hidden mt-3 px-4 py-2 rounded-lg text-sm font-bold btn-gradient">Retry</button>
             </div>
             
-            <div id="editBanner" class="hidden bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs font-bold px-4 py-3 rounded-xl mb-4 flex items-center justify-center">
-                <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                Editing existing booking
+            <div id="editBanner" class="hidden bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs font-bold px-4 py-3 rounded-xl mb-4 flex items-start gap-2">
+                <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                <p id="editBannerText" class="text-left leading-snug">Demo: none · Obs: none — change only what you need.</p>
             </div>
 
             <div id="step1" class="bg-brandSurface dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-brandBorder dark:border-gray-700 space-y-5 animate-swoop">
@@ -269,15 +264,18 @@
 
         function loadSystemData(opts) {
             const fresh = !!(opts && opts.fresh);
+            const excludeUuid = opts && opts.excludeUuid ? String(opts.excludeUuid).trim() : "";
             const id = ++slotsReq;
             slotsState = "loading";
             sysData = null;
             showSlotsStatus("loading");
             paintObservations();
+            const params = {};
+            if (excludeUuid) params.excludeUuid = excludeUuid;
             const slowTimer = setTimeout(() => {
                 if (id === slotsReq && slotsState === "loading") showSlotsStatus("slow");
             }, 6000);
-            apiGet("getSystemData", {}, {
+            apiGet("getSystemData", params, {
                 timeoutMs: GET_TIMEOUT_MS,
                 retries: 1,
                 fresh: fresh,
@@ -293,6 +291,7 @@
                 slotsState = "ready";
                 showSlotsStatus("ready");
                 try {
+                    updateEditBanner();
                     paintObservations();
                     if (!document.getElementById('step3').classList.contains('hidden')) renderDemos();
                 } catch (err) {
@@ -305,6 +304,12 @@
                 showSlotsStatus("error");
                 paintObservations();
             }).finally(() => clearTimeout(slowTimer));
+        }
+
+        function retrySystemData() {
+            const opts = { fresh: true };
+            if (selectedUuid) opts.excludeUuid = selectedUuid;
+            loadSystemData(opts);
         }
 
         try {
@@ -360,37 +365,33 @@
             }
 
             try {
+                const wasEditing = !!selectedUuid;
                 if (userData && userData.uuid) {
-                    if (userData.isLocked) {
-                        document.getElementById('step1').classList.add('hidden');
-                        document.getElementById('errorView').classList.remove('hidden');
-                        return;
-                    }
-                    if (confirm("We found an existing booking under this email. Load and update your previous booking?")) {
-                        selectedUuid = userData.uuid;
-                        userDataObj = userData; 
-                        document.getElementById('demoAvailability').value = userData.demoAvailability || "";
-                        document.getElementById('editBanner').classList.remove('hidden');
-                        
-                        document.querySelectorAll('.plat-chk').forEach(c => c.checked = false);
+                    selectedUuid = userData.uuid;
+                    userDataObj = userData;
+                    document.getElementById('demoAvailability').value = userData.demoAvailability || "";
+                    document.getElementById('submitBtn').innerText = "Update Booking";
+                    if (Array.isArray(userData.platforms)) {
+                        document.querySelectorAll('.plat-chk').forEach(c => { c.checked = false; });
                         userData.platforms.forEach(p => {
-                            let chk = document.querySelector(`.plat-chk[value="${p}"]`);
-                            if(chk) chk.checked = true;
+                            const chk = document.querySelector('.plat-chk[value="' + p + '"]');
+                            if (chk) chk.checked = true;
                         });
-                        checkedPlats = userData.platforms;
-                        document.getElementById('submitBtn').innerText = "Update Booking";
-                    } else {
-                        selectedUuid = null; userDataObj = null;
-                        document.getElementById('editBanner').classList.add('hidden');
-                        document.getElementById('submitBtn').innerText = "Confirm Booking";
+                        const saved = userData.platforms.filter(p => document.querySelector('.plat-chk[value="' + p + '"]'));
+                        if (saved.length) checkedPlats = saved;
                     }
+                    updateEditBanner();
+                    pendingPlatforms = checkedPlats;
+                    loadSystemData({ fresh: true, excludeUuid: selectedUuid });
                 } else {
-                    selectedUuid = null; userDataObj = null;
-                    document.getElementById('editBanner').classList.add('hidden');
+                    selectedUuid = null;
+                    userDataObj = null;
                     document.getElementById('submitBtn').innerText = "Confirm Booking";
+                    updateEditBanner();
+                    pendingPlatforms = checkedPlats;
+                    if (wasEditing) loadSystemData({ fresh: true });
                 }
-                
-                pendingPlatforms = checkedPlats;
+
                 goToStep(2);
                 paintObservations();
             } catch (err) {
@@ -474,9 +475,86 @@
             }
         }
 
+        function bookingHasObs() {
+            return !!(userDataObj && (userDataObj.obs1 || userDataObj.obs2));
+        }
+
+        function isUserObs(o) {
+            if (!userDataObj || !o) return false;
+            if (o.held) return true;
+            const id = String(o.id);
+            return String(userDataObj.obs1 || "") === id || String(userDataObj.obs2 || "") === id;
+        }
+
+        function isUserDemo(d) {
+            if (!userDataObj || !d) return false;
+            if (d.held) return true;
+            return !!userDataObj.demo && String(userDataObj.demo) === String(d.id);
+        }
+
+        function yourBookingBadge(show) {
+            return show
+                ? '<span class="ml-1.5 align-middle text-[10px] font-bold uppercase tracking-wide text-brandStudent">Your booking</span>'
+                : "";
+        }
+
+        function slotStamp(slot, fallbackId) {
+            if (slot) {
+                const monthParts = String(slot.monthDay || "").trim().split(/\s+/);
+                const month = monthParts[0] || "";
+                const dayNum = monthParts[1] && /^\d+$/.test(monthParts[1]) ? String(parseInt(monthParts[1], 10)) : "";
+                const start = String(slot.timeRange || "").split("-")[0].trim();
+                const label = [slot.dayOfWeek, dayNum, month, start].filter(Boolean).join(" ");
+                if (label) return label;
+            }
+            const match = String(fallbackId || "").match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}:\d{2})/);
+            if (!match) return fallbackId ? String(fallbackId) : "";
+            const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+            if (isNaN(date.getTime())) return String(fallbackId);
+            const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            return days[date.getDay()] + " " + date.getDate() + " " + months[date.getMonth()] + " " + match[4];
+        }
+
+        function findDemoSlot(id) {
+            if (!id || !sysData || !Array.isArray(sysData.demos)) return null;
+            return sysData.demos.find(d => String(d.id) === String(id)) || null;
+        }
+
+        function findObsSlot(id) {
+            if (!id || !sysData || !Array.isArray(sysData.observations)) return null;
+            return sysData.observations.find(o => String(o.id) === String(id)) || null;
+        }
+
+        function obsSummary(user) {
+            const ids = [user.obs1, user.obs2].filter(Boolean);
+            if (!ids.length) return "none";
+            return ids.map(id => {
+                const slot = findObsSlot(id);
+                if (!slot) return "current class";
+                const stamp = slotStamp(slot, id);
+                return slot.platform ? slot.platform + " " + stamp : stamp;
+            }).join(", ");
+        }
+
+        function updateEditBanner() {
+            const banner = document.getElementById('editBanner');
+            const text = document.getElementById('editBannerText');
+            if (!selectedUuid || !userDataObj) {
+                banner.classList.add('hidden');
+                return;
+            }
+            const demoLabel = userDataObj.demo
+                ? (slotStamp(findDemoSlot(userDataObj.demo), userDataObj.demo) || "current session")
+                : "none";
+            text.textContent = "Demo: " + demoLabel + " · Obs: " + obsSummary(userDataObj) + " — change only what you need.";
+            banner.classList.remove('hidden');
+        }
+
         function renderObservations(platforms) {
             const container = document.getElementById('obsContainer');
             container.innerHTML = '';
+            const noObsYet = !!(userDataObj && !userDataObj.obs1 && !userDataObj.obs2);
             platforms.forEach(p => {
                 let html = `<div><h3 class="text-sm font-bold text-brandPrimary dark:text-white mb-3">${p}</h3><div class="space-y-2">`;
                 let options = sysData.observations.filter(o => o.platform === p);
@@ -485,7 +563,7 @@
                     html += `<div class="p-4 border border-dashed border-gray-300 dark:border-gray-600 rounded-xl text-gray-400 text-xs text-center">No upcoming classes for ${p}. This observation will be skipped.</div>`;
                 } else {
                     options.forEach(o => {
-                        let isChecked = userDataObj && (userDataObj.obs1 == o.id || userDataObj.obs2 == o.id) ? "checked" : "";
+                        const isChecked = userDataObj && (String(userDataObj.obs1 || "") === String(o.id) || String(userDataObj.obs2 || "") === String(o.id)) ? "checked" : "";
                         const monthDay = String(o.monthDay || "");
                         const monthParts = monthDay.split(" ");
                         html += `
@@ -497,28 +575,37 @@
                                     <span class="block text-lg font-black text-brandPrimary dark:text-white leading-none">${monthParts[1] || ""}</span>
                                 </div>
                                 <div>
-                                    <span class="block text-sm font-bold text-brandPrimary dark:text-white">${o.dayOfWeek} ${o.timeRange}</span>
+                                    <span class="block text-sm font-bold text-brandPrimary dark:text-white">${o.dayOfWeek} ${o.timeRange}${yourBookingBadge(isUserObs(o))}</span>
                                     <span class="block text-xs font-medium text-brandSecondary mt-0.5">${o.course} (S${o.session}) w/ ${o.teacher}</span>
                                 </div>
                             </div>
                         </label>`;
                     });
                 }
-                let skipCheck = options.length === 0 || (userDataObj && !userDataObj.obs1 && !userDataObj.obs2 && options.length > 0) ? "checked" : "";
+                const skipCheck = options.length === 0 || (noObsYet && options.length > 0) ? "checked" : "";
+                const skipLabel = noObsYet && options.length > 0
+                    ? "Skip for now — or pick a class above"
+                    : "Skip / Not Available";
                 html += `
                 <label class="block cursor-pointer mt-2">
                     <input type="radio" name="obs_${p}" value="skip" ${skipCheck} class="card-radio hidden">
                     <div class="flex items-center p-3 border border-brandBorder dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50 transition-colors">
-                        <span class="text-xs font-bold text-brandSecondary dark:text-gray-400 pl-2">Skip / Not Available</span>
+                        <span class="text-xs font-bold text-brandSecondary dark:text-gray-400 pl-2">${skipLabel}</span>
                     </div>
                 </label></div></div>`;
                 container.insertAdjacentHTML('beforeend', html);
             });
             const hint = document.getElementById('obsHint');
             const anyOpen = platforms.some(p => sysData.observations.some(o => o.platform === p));
-            hint.textContent = anyOpen
-                ? "Select one class per platform. Highly recommended."
-                : "No classes are open for your platforms, so those observations are skipped. Continue when you are ready.";
+            if (noObsYet && anyOpen) {
+                hint.textContent = "No observation on your booking yet. Skip is selected — pick a class above if you want to add one.";
+            } else if (bookingHasObs() && anyOpen) {
+                hint.textContent = "Your class is marked Your booking. Change only what you need.";
+            } else if (anyOpen) {
+                hint.textContent = "Select one class per platform. Highly recommended.";
+            } else {
+                hint.textContent = "No classes are open for your platforms, so those observations are skipped. Continue when you are ready.";
+            }
         }
 
         function renderDemos() {
@@ -541,7 +628,7 @@
                             <span class="block text-lg font-black text-brandPrimary dark:text-white leading-none">${monthParts[1] || ""}</span>
                         </div>
                         <div>
-                            <span class="block text-sm font-bold text-brandPrimary dark:text-white">${d.dayOfWeek || ""} ${d.timeRange || ""}</span>
+                            <span class="block text-sm font-bold text-brandPrimary dark:text-white">${d.dayOfWeek || ""} ${d.timeRange || ""}${yourBookingBadge(isUserDemo(d))}</span>
                             <span class="block text-xs font-medium text-brandSecondary mt-0.5">Teaching Demo</span>
                         </div>
                     </div>
